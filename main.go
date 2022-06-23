@@ -3,9 +3,10 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"log"
+	"io"
 	_ "log"
 	"os"
+	"time"
 )
 
 func BubbleSort(array []int) []int {
@@ -38,17 +39,27 @@ func Use(vals ...interface{}) {
 	}
 }
 func main() {
-	// open file for reading
-	// read line by line
-	lines, err := readLines("data/100.txt")
+	file, err := os.Open("data/100.txt")
 	if err != nil {
-		log.Fatalf("readLines: %s", err)
+		fmt.Println(err)
+		os.Exit(1)
 	}
-	// print file contents
-	var a1 [100]int
-	for j, line := range lines {
-		fmt.Println(line)
+	var perline int
+	var nums []int
+	for {
+		_, err := fmt.Fscanf(file, "%d\n", &perline)
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			fmt.Println(err)
+			os.Exit(1)
+		}
+		nums = append(nums, perline)
+	}
+	inicio := time.Now()
+	BubbleSort(nums)
+	duracion := time.Since(inicio)
+	fmt.Println("Tiempo en Microsegundos: ", duracion.Nanoseconds())
 
-		a1 = append(a1, line)
-	}
 }
